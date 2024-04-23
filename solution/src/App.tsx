@@ -67,6 +67,7 @@ const App = () => {
   // there's still an issue if the 'Add' button is clicked rapidly, so I added another state: isAddTemporarilyDisabled.
   // There may be additional edge cases that require testing - incorporating tests could be beneficial here. 
   // In my previous applications, we performed a lot validations upon pressing the 'Add' button."
+  // But when working with PlayFab, we needed to use throttling as it were some limits.
   useEffect(() => {
     const validateName = async () => {
       if (debouncedName) {
