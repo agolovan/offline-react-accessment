@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 import DisplayEntries from "./DisplayEntries";
-import { getLocations } from "./mock-api/apis";
-import { FAILED_FETCH_LOCATIONS, NAME_ALREADY_TAKEN } from "./constants";
+import { getLocations, isNameValid } from "./mock-api/apis";
+import {
+  FAILED_FETCH_LOCATIONS,
+  NAME_ALREADY_TAKEN,
+  INVALID_NAME,
+} from "./constants";
 
 import "./App.css";
 
 const App = () => {
   const [name, setName] = useState("");
+  const [debouncedName, setDebouncedName] = useState("");
+
   const [selectedLocation, setSelectedLocation] = useState("");
   const [locations, setLocations] = useState([]);
   const [entries, setEntries] = useState(new Map());
   const [nameValidationError, setNameValidationError] = useState("");
+  const [isAddTemporaryDisalbed, setIsAddTemporaryDisalbed] = useState(false);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -30,14 +38,17 @@ const App = () => {
     if (name !== "") {
       setEntries(new Map(entries.set(name, selectedLocation)));
       setName("");
+      setDebouncedName('');
     }
   };
 
   const handleClear = () => {
     setEntries(new Map());
     setName("");
+    setDebouncedName('');
     setSelectedLocation(locations[0]);
     setNameValidationError("");
+    setIsAddTemporaryDisalbed(false);
   };
 
   const displayLocations = () =>
@@ -45,15 +56,39 @@ const App = () => {
       return <option key={value}>{value}</option>;
     });
 
-  const enterValidateName = async (event) => {
-    const inputValue = event.target.value;
-    if (entries.has(inputValue)) {
-      setNameValidationError(NAME_ALREADY_TAKEN);
-    } else {
-      setNameValidationError("");
-    }
-    setName(inputValue);
-  };
+  // NOTE: Not sure if I like that at all - the idea of isNameValid to check for invalid name
+  // I think just to check for some knowledge for  debouncing and throttling.
+  // As isNameValid could be changed, I just decided to make a check for taken there and send updatedName there.
+  // Not sure if this is expected
+  // Personally, I prefer checking right away as all data is in memory - entries - so we really don't need debounce and etc.
+  // Also, there is still a problem if we click Add very fast, so we need to add another state: isAddTemporaryDisalbed.
+  // It could be more edge cases that should be tested - adding tests could help here.
+  useEffect(() => {
+    const validateName = async () => {
+      if (debouncedName) {
+        try {
+          const updatedName = !entries.has(debouncedName)
+            ? debouncedName
+            : INVALID_NAME;
+          const isNameAvailable = await isNameValid(updatedName);
+          if (isNameAvailable) {
+            setNameValidationError("");
+          } else {
+            setNameValidationError(NAME_ALREADY_TAKEN);
+          }
+          setDebouncedName("");
+          setIsAddTemporaryDisalbed(false)
+        } catch {
+          alert(FAILED_FETCH_LOCATIONS);
+        }
+      }
+    };
+    validateName();
+  }, [debouncedName, entries]);
+
+  const debounced = useDebouncedCallback((text) => {
+    setDebouncedName(text);
+  }, 1000);
 
   return (
     <div className="App">
@@ -69,7 +104,13 @@ const App = () => {
                 name="Name"
                 className="item"
                 value={name}
-                onChange={enterValidateName}
+                onChange={(event) => {
+                  const text = event.target.value;
+                  setNameValidationError("");
+                  setName(text);
+                  setIsAddTemporaryDisalbed(true)
+                  debounced(text);
+                }}
               />
             </div>
           </div>
@@ -113,7 +154,7 @@ const App = () => {
                 <input
                   type="button"
                   className="button"
-                  disabled={!!nameValidationError}
+                  disabled={!!nameValidationError || isAddTemporaryDisalbed}
                   value="Add"
                   onClick={handleAdd}
                 />
