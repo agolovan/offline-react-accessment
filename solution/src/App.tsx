@@ -90,6 +90,9 @@ const App = () => {
     setDebouncedName(text);
   }, 1000);
 
+  // We could use Form here and Submit for Form, but for this app, there is not much difference.
+  // I just started like that, using controlled component ( mostly for name).
+  // More cleaning may be needed. 
   return (
     <div className="App">
       <header className="App-header">
@@ -108,7 +111,7 @@ const App = () => {
                   const text = event.target.value;
                   setNameValidationError("");
                   setName(text);
-                  setIsAddTemporaryDisalbed(true)
+                  setIsAddTemporaryDisalbed(true); // wait till we finish validation process for name
                   debounced(text);
                 }}
               />
