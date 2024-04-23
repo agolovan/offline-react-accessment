@@ -12,6 +12,8 @@ import {
 
 import "./App.css";
 
+// Note: We could use Form, but for this app, there is not much difference.
+// More cleaning may be needed. 
 const App = () => {
   const [name, setName] = useState("");
   const [debouncedName, setDebouncedName] = useState("");
@@ -57,13 +59,14 @@ const App = () => {
       return <option key={value}>{value}</option>;
     });
 
-  // NOTE: Not sure if I like that at all - the idea of isNameValid to check for invalid name
-  // I think just to check for some knowledge for  debouncing and throttling.
-  // As isNameValid could be changed, I just decided to make a check for taken there and send updatedName there.
-  // Not sure if this is expected
-  // Personally, I prefer checking right away as all data is in memory - entries - so we really don't need debounce and etc.
-  // Also, there is still a problem if we click Add very fast, so we need to add another state: isAddTemporaryDisalbed.
-  // It could be more edge cases that should be tested - adding tests could help here.
+  // NOTE: I believe the purpose of isNameValid is simply to check for some understanding of debouncing and throttling. 
+  // Since isNameValid couldn't be altered, I decided to first verify if the name is already taken, and 
+  // then send the updatedName to isNameValid. I'm uncertain if this is the expected approach.
+  // Personally, I prefer immediate validation since all the data is in memory (entries). 
+  // Therefore, there's no need for debounce or similar techniques. Moreover, 
+  // there's still an issue if the 'Add' button is clicked rapidly, so I added another state: isAddTemporarilyDisabled.
+  // There may be additional edge cases that require testing - incorporating tests could be beneficial here. 
+  // In my previous applications, we performed a lot validations upon pressing the 'Add' button."
   useEffect(() => {
     const validateName = async () => {
       if (debouncedName) {
@@ -91,9 +94,6 @@ const App = () => {
     setDebouncedName(text);
   }, 1000);
 
-  // We could use Form here and Submit for Form, but for this app, there is not much difference.
-  // I just started like that, using controlled component ( mostly for name).
-  // More cleaning may be needed. 
   return (
     <div className="App">
       <header className="App-header">
