@@ -5,6 +5,7 @@ import DisplayEntries from "./DisplayEntries";
 import { getLocations, isNameValid } from "./mock-api/apis";
 import {
   FAILED_FETCH_LOCATIONS,
+  FAILED_VALIDATE_NAME,
   NAME_ALREADY_TAKEN,
   INVALID_NAME,
 } from "./constants";
@@ -28,7 +29,7 @@ const App = () => {
         setLocations(locations);
         setSelectedLocation(locations[0]);
       } catch {
-        alert(FAILED_FETCH_LOCATIONS);
+        console.log(FAILED_FETCH_LOCATIONS);
       }
     };
     fetchLocations();
@@ -79,7 +80,7 @@ const App = () => {
           setDebouncedName("");
           setIsAddTemporaryDisalbed(false)
         } catch {
-          alert(FAILED_FETCH_LOCATIONS);
+          console.log(FAILED_VALIDATE_NAME);
         }
       }
     };
