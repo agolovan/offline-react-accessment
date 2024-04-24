@@ -39,7 +39,7 @@ const App = () => {
   }, []);
 
   const handleAdd = async () => {
-    if (name !== "") {
+    if (name.trim() !== "") {
       const newEntry: IEntry = {
         name,
         location: selectedLocation,
