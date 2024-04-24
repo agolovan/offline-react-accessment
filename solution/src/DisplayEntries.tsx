@@ -1,36 +1,36 @@
 import React from "react";
+import { IEntry } from "./types";
 
 import "./App.css";
 
 interface IEntries {
-  entries: any;
+  entries: Array<IEntry>;
 }
 
 const DisplayEntries = (props: IEntries) => (
-    <table className="table">
-      <tbody>
-        <tr className="tableHeader">
-          <td className="tableItem">Name</td>
-          <td className="tableItem">Location</td>
-        </tr>
-        {[...props.entries.keys()].map((name, index) => {
-          return (
-            <tr
-              key={name}
-              style={
-                index % 2 === 0
-                  ? { backgroundColor: "#ffffff", color: "#000000" }
-                  : { backgroundColor: "#D3D3D3", color: "#000000" }
-              }
-            >
-              <td className="tableItem">{name}</td>
-              <td className="tableItem">{props.entries.get(name)}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-
+  <table className="table">
+    <tbody>
+      <tr className="tableHeader">
+        <td className="tableItem">Name</td>
+        <td className="tableItem">Location</td>
+      </tr>
+      {props.entries.map((entry, index) => {
+        return (
+          <tr
+            key={entry.name}
+            style={
+              index % 2 === 0
+                ? { backgroundColor: "#ffffff", color: "#000000" }
+                : { backgroundColor: "#D3D3D3", color: "#000000" }
+            }
+          >
+            <td className="tableItem">{entry.name}</td>
+            <td className="tableItem">{entry.location}</td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+);
 
 export default DisplayEntries;

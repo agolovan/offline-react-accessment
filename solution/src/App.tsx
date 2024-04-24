@@ -3,6 +3,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 import DisplayEntries from "./DisplayEntries";
 import { getLocations, isNameValid } from "./mock-api/apis";
+import { IEntry } from "./types";
 import {
   FAILED_FETCH_LOCATIONS,
   FAILED_VALIDATE_NAME,
@@ -13,14 +14,14 @@ import {
 import "./App.css";
 
 // Note: We could use Form, but for this app, there is not much difference.
-// More cleaning may be needed. 
+// More cleaning may be needed.
 const App = () => {
   const [name, setName] = useState("");
   const [debouncedName, setDebouncedName] = useState("");
 
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [locations, setLocations] = useState([]);
-  const [entries, setEntries] = useState(new Map());
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
+  const [locations, setLocations] = useState<Array<string>>([]);
+  const [entries, setEntries] = useState<Array<IEntry>>([]);
   const [nameValidationError, setNameValidationError] = useState("");
   const [isAddTemporaryDisalbed, setIsAddTemporaryDisalbed] = useState(false);
 
@@ -39,17 +40,24 @@ const App = () => {
 
   const handleAdd = async () => {
     if (name !== "") {
-      setEntries(new Map(entries.set(name, selectedLocation)));
+      const newEntry: IEntry = {
+        name,
+        location: selectedLocation,
+      };
+      setEntries((prevState) => {
+        const updatedEntries = [...prevState, newEntry];
+        return updatedEntries;
+      });
       setName("");
-      setDebouncedName('');
+      setDebouncedName("");
     }
   };
 
+  // NOTE: It is OK to leave selected location as is. Another approach could be ad first option Select Location:
   const handleClear = () => {
-    setEntries(new Map());
+    setEntries([]);
     setName("");
-    setDebouncedName('');
-    setSelectedLocation(locations[0]);
+    setDebouncedName("");
     setNameValidationError("");
     setIsAddTemporaryDisalbed(false);
   };
@@ -59,20 +67,22 @@ const App = () => {
       return <option key={value}>{value}</option>;
     });
 
-  // NOTE: I believe the purpose of isNameValid is simply to check for some understanding of debouncing and throttling. 
-  // Since isNameValid couldn't be altered, I decided to first verify if the name is already taken, and 
+  // NOTE: I believe the purpose of isNameValid is simply to check for some understanding of debouncing and throttling.
+  // Since isNameValid couldn't be altered, I decided to first verify if the name is already taken, and
   // then send the updatedName to isNameValid. I'm uncertain if this is the expected approach.
-  // Personally, I prefer immediate validation since all the data is in memory (entries). 
-  // Therefore, there's no need for debounce or similar techniques. Moreover, 
+  // Personally, I prefer immediate validation since all the data is in memory (entries).
+  // Therefore, there's no need for debounce or similar techniques. Moreover,
   // there's still an issue if the 'Add' button is clicked rapidly, so I added another state: isAddTemporarilyDisabled.
-  // There may be additional edge cases that require testing - incorporating tests could be beneficial here. 
+  // There may be additional edge cases that require testing - incorporating tests could be beneficial here.
   // In my previous applications, we performed a lot validations upon pressing the 'Add' button."
   // But when working with PlayFab, we needed to use throttling as it were some limits.
   useEffect(() => {
     const validateName = async () => {
       if (debouncedName) {
         try {
-          const updatedName = !entries.has(debouncedName)
+          const updatedName = !entries.some(
+            (entry) => entry.name === debouncedName
+          )
             ? debouncedName
             : INVALID_NAME;
           const isNameAvailable = await isNameValid(updatedName);
@@ -82,7 +92,7 @@ const App = () => {
             setNameValidationError(NAME_ALREADY_TAKEN);
           }
           setDebouncedName("");
-          setIsAddTemporaryDisalbed(false)
+          setIsAddTemporaryDisalbed(false);
         } catch {
           console.log(FAILED_VALIDATE_NAME);
         }
