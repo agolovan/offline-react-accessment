@@ -111,7 +111,7 @@ const App = () => {
         <div className="mainContainer">
           <div className="container">
             <span className="containerItem" style={{ width: "15%" }}>
-              Name
+              <label className="label">Name</label>
             </span>
             <div className="containerItem" style={{ width: "75%" }}>
               <input
@@ -139,7 +139,7 @@ const App = () => {
 
           <div className="container">
             <span className="containerItem" style={{ width: "15%" }}>
-              Location
+              <label className="label">Location</label>
             </span>
             <div className="containerItem" style={{ width: "75%" }}>
               <select
