@@ -83,7 +83,7 @@ const App = () => {
 
   // 1. Could the same name be used for different locations?
   // 2. There are two levels of validation: validating using isNameValid and checking
-  // if the name is already added to the table. In this scenario, why not include names like 'Tom' and 'Paul' in
+  //    if the name is already added to the table. In this scenario, why not include names like 'Tom' and 'Paul' in
   //    isNameValid to validate first using those names? What does 'invalid name' actually mean? 
   //    Is it just a name to check for, or is it a message?
   // 3. Is it necessary to check for both cases when typing a name, or could some validation be done when the "Add" button is pressed?
