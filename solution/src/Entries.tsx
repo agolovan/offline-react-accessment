@@ -7,7 +7,7 @@ interface IEntries {
   entries: Array<IEntry>;
 }
 
-const DisplayEntries = (props: IEntries) => (
+const Entries = (props: IEntries) => (
   <table className="table">
     <tbody>
       <tr className="tableHeader">
@@ -33,4 +33,4 @@ const DisplayEntries = (props: IEntries) => (
   </table>
 );
 
-export default DisplayEntries;
+export default Entries;

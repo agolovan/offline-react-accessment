@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import DisplayEntries from "./DisplayEntries";
+import Entries from "./Entries";
 import { getLocations, isNameValid } from "./mock-api/apis";
 import { IEntry } from "./types";
 import {
@@ -53,7 +53,7 @@ const App = () => {
     }
   };
 
-  // NOTE: It is OK to leave selected location as is. Another approach could be ad first option Select Location:
+  // NOTE: It is OK to leave selected location as is. Another approach could be to add first option Select Location.
   const handleClear = () => {
     setEntries([]);
     setName("");
@@ -176,7 +176,7 @@ const App = () => {
               </div>
             </div>
           </div>
-          <DisplayEntries entries={entries} />
+          <Entries entries={entries} />
         </div>
       </header>
     </div>
